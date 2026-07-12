@@ -7,7 +7,7 @@
 
   <view wx:if="{{error}}" style="margin:60rpx 20rpx;text-align:center;">
     <text style="color:#CF1322;">{{error}}</text>
-    <button style="margin-top:20rpx;background:#C8102E;color:#fff;" size="mini" bindtap="refresh">重新加载</button>
+    <button class="retry-btn" size="mini" bindtap="refresh">重新加载</button>
   </view>
 
   <block wx:if="{{showContent}}">
@@ -17,123 +17,61 @@
       <view class="hero-sub">{{updateTime}} 更新</view>
     </view>
 
-    <!-- 四指标卡片 -->
     <view class="m-grid">
-      <view class="m-card">
-        <view class="m-left">
-          <view class="m-val">{{totalGMV}}<text class="m-unit">万</text></view>
-          <view class="m-lab">总 GMV</view>
-        </view>
-        <van-tag type="{{gmvGrowthUp ? 'success' : 'danger'}}" size="medium">{{gmvGrowthText}}</van-tag>
-      </view>
-      <view class="m-card warn">
-        <view class="m-left">
-          <view class="m-val">{{alertCount}}<text class="m-unit">条</text></view>
-          <view class="m-lab">实时预警</view>
-        </view>
-      </view>
-      <view class="m-card succ">
-        <view class="m-left">
-          <view class="m-val">{{platformData.length}}<text class="m-unit">个</text></view>
-          <view class="m-lab">接入平台</view>
-        </view>
-      </view>
-      <view class="m-card acct">
-        <view class="m-left">
-          <view class="m-val">{{sentimentData.length}}<text class="m-unit">组</text></view>
-          <view class="m-lab">舆情关键词</view>
-        </view>
-      </view>
+      <view class="m-card"><view class="m-left"><view class="m-val">{{totalGMV}}<text class="m-unit">万</text></view><view class="m-lab">总 GMV</view></view><van-tag type="{{gmvGrowthUp ? 'success' : 'danger'}}">{{gmvGrowthText}}</van-tag></view>
+      <view class="m-card warn"><view class="m-left"><view class="m-val">{{alertCount}}<text class="m-unit">条</text></view><view class="m-lab">实时预警</view></view></view>
+      <view class="m-card succ"><view class="m-left"><view class="m-val">{{platformData.length}}<text class="m-unit">个</text></view><view class="m-lab">接入平台</view></view></view>
+      <view class="m-card acct"><view class="m-left"><view class="m-val">{{sentimentData.length}}<text class="m-unit">组</text></view><view class="m-lab">舆情关键词</view></view></view>
     </view>
 
-    <!-- === 图表1: GMV趋势 柱状图 === -->
     <view class="card">
-      <view class="card-head">
-        <text class="card-title">📈 GMV 近7日趋势</text>
-        <text class="card-badge">环比 {{gmvGrowthText}}</text>
-      </view>
+      <view class="card-head"><text class="card-title">📈 GMV 近7日趋势</text><text class="card-badge">环比 {{gmvGrowthText}}</text></view>
       <view wx:if="{{gmvTrend.length}}" class="chart-bars">
-        <view class="bar-row" wx:for="{{gmvTrend}}" wx:key="date">
-          <text class="bar-label">{{item.date}}</text>
-          <view class="bar-bg">
-            <view class="bar-fill red" style="width:{{item.pct}}%"></view>
-          </view>
-          <text class="bar-val">{{item.displayValue}}</text>
-        </view>
+        <view class="bar-row" wx:for="{{gmvTrend}}" wx:key="date"><text class="bar-label">{{item.date}}</text><view class="bar-bg"><view class="bar-fill red" style="width:{{item.pct}}%"></view></view><text class="bar-val">{{item.displayValue}}</text></view>
       </view>
     </view>
 
-    <!-- === 图表2: 平台流量 柱状图 === -->
     <view class="card">
       <view class="card-title">📊 各平台流量数据</view>
       <view wx:if="{{platformData.length}}" class="chart-bars">
-        <view class="bar-row" wx:for="{{platformData}}" wx:key="platform">
-          <view class="bar-icon">{{item.icon}}</view>
-          <view class="bar-bg">
-            <view class="bar-fill" style="width:{{item.barPct}}%;background:{{item.color}};"></view>
-          </view>
-          <view class="bar-right">
-            <text class="bar-val">{{item.ratio}}%</text>
-            <text class="bar-sub">{{item.count}}条</text>
-          </view>
-        </view>
+        <view class="bar-row" wx:for="{{platformData}}" wx:key="platform"><view class="bar-icon">{{item.icon}}</view><view class="bar-bg"><view class="bar-fill" style="width:{{item.barPct}}%;background:{{item.color}};"></view></view><view class="bar-right"><text class="bar-val">{{item.ratio}}%</text><text class="bar-sub">{{item.count}}条</text></view></view>
       </view>
     </view>
 
-    <!-- === 图表3: 竞品价格 柱状图 === -->
     <view class="card">
       <view class="card-title">🏪 竞品平均价格对比</view>
       <view wx:if="{{brandList.length}}" class="chart-bars tight">
-        <view class="bar-row tight" wx:for="{{brandList}}" wx:key="brand">
-          <text class="bar-label brand-name">{{item.brand}}</text>
-          <view class="bar-bg">
-            <view class="bar-fill brand-fill" style="width:{{item.barPct}}%"></view>
-          </view>
-          <text class="bar-val price">¥{{item.avgPrice}}</text>
-        </view>
+        <view class="bar-row tight" wx:for="{{brandList}}" wx:key="brand"><text class="bar-label brand-name">{{item.brand}}</text><view class="bar-bg"><view class="bar-fill brand-fill" style="width:{{item.barPct}}%"></view></view><text class="bar-val price">¥{{item.avgPrice}}</text></view>
       </view>
     </view>
 
-    <!-- === 舆情情感 === -->
     <view class="card">
       <view class="card-title">💬 舆情情感分析</view>
       <view wx:if="{{sentimentData.length}}">
         <view class="sent-row" wx:for="{{sentimentData}}" wx:key="keyword">
-          <view class="sent-hd">
-            <text class="sent-kw">#{{item.keyword}}</text>
-            <text class="sent-cnt">{{item.mentions}} 条提及</text>
-          </view>
+          <view class="sent-hd"><text class="sent-kw">#{{item.keyword}}</text><text class="sent-cnt">{{item.mentions}} 条提及</text></view>
           <view class="sent-bar">
             <view wx:if="{{item.pos > 0}}" class="sent-seg sent-pos" style="width:{{item.pos}}%"></view>
             <view wx:if="{{item.neu > 0}}" class="sent-seg sent-neu" style="width:{{item.neu}}%"></view>
             <view wx:if="{{item.neg > 0}}" class="sent-seg sent-neg" style="width:{{item.neg}}%"></view>
           </view>
-          <view class="sent-pct-row">
-            <text class="sp-pos">👍 {{item.pos}}%</text>
-            <text class="sp-neu">— {{item.neu}}%</text>
-            <text class="sp-neg">👎 {{item.neg}}%</text>
-          </view>
+          <view class="sent-pct-row"><text class="sp-pos">👍 {{item.pos}}%</text><text class="sp-neu">— {{item.neu}}%</text><text class="sp-neg">👎 {{item.neg}}%</text></view>
+          <view class="sent-legend"><view class="sl-dot" style="background:linear-gradient(90deg,#52C41A,#73D13D)"></view><text>正面</text><view class="sl-dot" style="background:linear-gradient(90deg,#FAAD14,#FFC53D)"></view><text>中性</text><view class="sl-dot" style="background:linear-gradient(90deg,#FF4D4F,#FF7875)"></view><text>负面</text></view>
         </view>
       </view>
     </view>
 
-    <!-- 预警 -->
     <view class="card" wx:if="{{alerts.length}}">
       <view class="card-title">🚨 实时预警</view>
-      <view class="alert {{item.severity}}" wx:for="{{alerts}}" wx:key="time" wx:if="{{item.navigate_type === 'product_detail'}}" data-id="{{item.product_id}}" data-url="{{item.external_url}}" bindtap="onAlertTap">
-        <view class="alert-row">
-          <van-tag type="{{item.severity === 'danger' ? 'danger' : 'warning'}}">{{item.type}}</van-tag>
-          <text class="alert-link">查看详情 ></text>
-        </view>
-        <text class="alert-msg">{{item.message}}</text>
+      <view class="alert {{item.severity}}" wx:for="{{alerts}}" wx:key="time" wx:if="{{item.navigate_type === 'product_detail'}}" data-id="{{item.product_id}}" bindtap="onAlertTap">
+        <view class="alert-row"><van-tag type="warning">{{item.type}}</van-tag><text class="alert-link">查看详情 ></text></view><text class="alert-msg">{{item.message}}</text>
       </view>
       <view class="alert {{item.severity}}" wx:for="{{alerts}}" wx:key="time" wx:if="{{!item.navigate_type}}">
-        <van-tag type="{{item.severity === 'danger' ? 'danger' : 'warning'}}">{{item.type}}</van-tag>
-        <text class="alert-msg">{{item.message}}</text>
+        <van-tag type="danger">{{item.type}}</van-tag><text class="alert-msg">{{item.message}}</text>
       </view>
     </view>
 
-    <view class="ft">更新时间: {{updateTime}}  |  下拉刷新获取最新数据</view>
+    <view class="ft">更新时间: {{updateTime}}  |  下拉刷新</view>
 
   </block>
 </view>

@@ -1,0 +1,6 @@
+Page({data:{item:null,loading:true,maxPrice:1},onLoad:function(o){var id=o.id;if(id)this.loadDetail(id)},
+async loadDetail(id){this.setData({loading:true});try{var r=await this._req('/api/monitor/competitor/'+id);var mp=Math.max.apply(null,(r.price_history||[]).map(function(p){return p.price}).concat((r.same_category||[]).map(function(c){return c.price||0})),1);this.setData({item:r,maxPrice:mp,loading:false})}catch(e){this.setData({loading:false});wx.showToast({title:'加载失败',icon:'none'})}},
+_req:function(p){return new Promise(function(rs,rj){wx.request({url:'http://192.168.1.7:8000'+p,timeout:10000,success:function(r){r.statusCode===200?rs(r.data):rj(r)},fail:rj})})},
+viewCompetitor:function(e){var id=e.currentTarget.dataset.id;wx.navigateTo({url:'/subpkg/pages/product-detail/product-detail?id='+id})},
+openSourceUrl:function(e){var url=e.currentTarget.dataset.url;if(url){wx.showModal({title:'跳转到数据来源',content:'将打开外部链接查看原始数据',success:function(res){if(res.confirm){wx.setClipboardData({data:url,success:function(){wx.showToast({title:'链接已复制，请到浏览器打开',icon:'none',duration:3000})}})}}})}else{wx.showToast({title:'当前为模拟数据，无外部来源',icon:'none'})}},
+})

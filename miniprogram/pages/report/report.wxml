@@ -1,112 +1,41 @@
 <view class="page">
-
-  <!-- 顶部操作区 -->
   <view class="action-bar">
-    <view class="action-title">
-      <text class="action-icon">📋</text>
-      <text class="action-text">AI 智能报告</text>
-    </view>
+    <view class="action-title"><text class="action-icon">📋</text><text class="action-text">AI 智能报告</text></view>
     <view class="action-buttons">
-      <button
-        class="report-btn daily-btn {{activeReport === 'daily' ? 'active' : ''}}"
-        data-type="daily"
-        bindtap="generateReport"
-        loading="{{generating && activeReport === 'daily'}}"
-      >
-        <text class="btn-icon">☀️</text>
-        <text>日报</text>
-      </button>
-      <button
-        class="report-btn weekly-btn {{activeReport === 'weekly' ? 'active' : ''}}"
-        data-type="weekly"
-        bindtap="generateReport"
-        loading="{{generating && activeReport === 'weekly'}}"
-      >
-        <text class="btn-icon">📅</text>
-        <text>周报</text>
-      </button>
+      <button class="report-btn {{activeReport === 'daily' ? 'active' : ''}}" data-type="daily" bindtap="generateReport" loading="{{generating && activeReport === 'daily'}}"><text class="btn-icon">☀️</text><text>日报</text></button>
+      <button class="report-btn {{activeReport === 'weekly' ? 'active' : ''}}" data-type="weekly" bindtap="generateReport" loading="{{generating && activeReport === 'weekly'}}"><text class="btn-icon">📅</text><text>周报</text></button>
     </view>
   </view>
 
-  <!-- 报告卡片区域 -->
   <block wx:if="{{sections.length > 0}}">
-    <view class="report-container">
-
-      <!-- 每个 section 一张卡片 -->
-      <view class="report-card" wx:for="{{sections}}" wx:key="title" wx:for-index="idx">
-
-        <!-- 卡片标题栏 -->
-        <view class="card-header" wx:if="{{item.title}}">
-          <view class="card-icon-wrapper" style="background: {{idx === 0 ? '#C8102E' : idx === 1 ? '#FF6B35' : idx === 2 ? '#4ECDC4' : idx === 3 ? '#722ED1' : '#FAAD14'}}">
-            <text class="card-icon-text">{{item.icon || '📌'}}</text>
-          </view>
-          <text class="card-header-title">{{item.title}}</text>
-        </view>
-
-        <!-- 卡片内容区域 -->
-        <view class="card-body">
-          <view class="card-item" wx:for="{{item.items}}" wx:key="*this" wx:for-item="text">
-            <view class="card-dot" style="background: {{idx === 0 ? '#C8102E' : idx === 1 ? '#FF6B35' : idx === 2 ? '#4ECDC4' : idx === 3 ? '#722ED1' : '#FAAD14'}}"></view>
-            <text class="card-item-text">{{text}}</text>
-          </view>
-        </view>
-
-        <!-- 卡片底边装饰 -->
-        <view class="card-bottom-bar" style="background: {{idx === 0 ? '#C8102E' : idx === 1 ? '#FF6B35' : idx === 2 ? '#4ECDC4' : idx === 3 ? '#722ED1' : '#FAAD14'}}"></view>
+    <view class="report-card" wx:for="{{sections}}" wx:key="title" wx:for-index="idx">
+      <view class="card-header" wx:if="{{item.title}}">
+        <view class="card-icon-wrapper" style="background:{{idx === 0 ? '#C8102E' : idx === 1 ? '#FF6B35' : idx === 2 ? '#4ECDC4' : '#722ED1'}}"><text class="card-icon-text">{{item.icon || '📌'}}</text></view>
+        <text class="card-header-title">{{item.title}}</text>
       </view>
-
-      <!-- 页脚 -->
-      <view class="report-footer">
-        <text>报告由 DeepSeek AI 自动生成</text>
-        <text class="footer-sub">金宫味业 · 数字营销数据中台</text>
+      <view class="card-body">
+        <view class="card-item" wx:for="{{item.items}}" wx:key="*this" wx:for-item="text">
+          <view class="card-dot" style="background:{{idx === 0 ? '#C8102E' : idx === 1 ? '#FF6B35' : idx === 2 ? '#4ECDC4' : '#722ED1'}}"></view><text class="card-item-text">{{text}}</text>
+        </view>
       </view>
     </view>
+    <view class="report-footer"><text>报告由 DeepSeek AI 自动生成</text></view>
   </block>
 
-  <!-- 空状态 -->
   <view class="empty-state" wx:elif="{{!generating}}">
-    <view class="empty-icon">📊</view>
-    <text class="empty-title">智能数据分析报告</text>
-    <text class="empty-desc">基于实时数据自动生成日报/周报</text>
-    <view class="empty-features">
-      <view class="feature-item">
-        <text class="feature-icon">💡</text>
-        <text>AI 数据洞察</text>
-      </view>
-      <view class="feature-item">
-        <text class="feature-icon">🎯</text>
-        <text>行动建议</text>
-      </view>
-      <view class="feature-item">
-        <text class="feature-icon">⚠️</text>
-        <text>异常预警</text>
-      </view>
-    </view>
+    <view class="empty-icon">📊</view><text class="empty-title">智能数据分析报告</text><text class="empty-desc">基于实时数据自动生成日报/周报</text>
+    <view class="empty-features"><view class="feature-item"><text class="feature-icon">💡</text><text>AI 数据洞察</text></view><view class="feature-item"><text class="feature-icon">🎯</text><text>行动建议</text></view><view class="feature-item"><text class="feature-icon">⚠️</text><text>异常预警</text></view></view>
   </view>
 
-  <!-- 加载状态 -->
   <view class="loading-state" wx:if="{{generating}}">
-    <view class="loading-spin"></view>
-    <text class="loading-text">AI 正在分析数据...</text>
-    <text class="loading-hint">预计 5-15 秒</text>
+    <view class="loading-spin"></view><text class="loading-text">AI 正在分析数据...</text>
   </view>
 
-  <!-- 历史报告 -->
   <view class="history-section" wx:if="{{history.length > 0}}">
     <view class="history-title">历史报告</view>
-    <view
-      class="history-item"
-      wx:for="{{history}}"
-      wx:key="id"
-      data-item="{{item}}"
-      bindtap="viewHistory"
-    >
-      <view class="history-left">
-        <text class="history-dot {{item.type === 'daily' ? 'dot-daily' : 'dot-weekly'}}"></text>
-        <text class="history-type">{{item.type === 'daily' ? '日报' : '周报'}}</text>
-      </view>
+    <view class="history-item" wx:for="{{history}}" wx:key="id" data-item="{{item}}" bindtap="viewHistory">
+      <view class="history-left"><view class="history-dot {{item.type === 'daily' ? 'dot-daily' : 'dot-weekly'}}"></view><text class="history-type">{{item.type === 'daily' ? '日报' : '周报'}}</text></view>
       <text class="history-time">{{item.time}}</text>
     </view>
   </view>
-
 </view>

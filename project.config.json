@@ -1,21 +1,30 @@
 {
-  "description": "金宫味业数字营销数据中台 - 微信小程序",
+  "description": "金宫味业数字营销数据中台",
   "projectname": "jingong-marketing",
   "miniprogramRoot": "miniprogram/",
-  "packNpmManually": true,
-  "packNpmRelationList": [
-    { "packageJsonPath": "miniprogram/package.json", "miniprogramNpmDistDir": "miniprogram/" }
-  ],
   "setting": {
     "urlCheck": false,
     "es6": true,
     "postcss": true,
     "minified": false,
     "enhance": true,
-    "showShadowRootInWxmlPanel": true,
-    "packNpmManually": true
+    "minifyWXSS": false,
+    "minifyWXML": false,
+    "uploadWithSourceMap": false,
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "miniprogram/package.json",
+        "miniprogramNpmDistDir": "miniprogram/"
+      }
+    ]
   },
-  "libVersion": "3.6.0",
-  "appid": "touristappid",
-  "condition": {}
+  "libVersion": "3.16.2",
+  "appid": "wx0126dfb1bac3fdc7",
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "node_modules" },
+      { "type": "folder", "value": "screenshots" }
+    ]
+  }
 }

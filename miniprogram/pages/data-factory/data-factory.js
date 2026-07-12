@@ -1,12 +1,16 @@
-var app = getApp()
 var API = 'http://192.168.1.7:8000'
 
-function req(path) {
+function request(path, method, data) {
+  method = method || 'GET'
   return new Promise(function(resolve, reject) {
     wx.request({
-      url: API + path, timeout: 10000,
-      success: function(r) { r.statusCode === 200 ? resolve(r.data) : reject(r) },
-      fail: reject
+      url: API + path, method: method, data: data, timeout: 10000,
+      header: { 'Content-Type': 'application/json' },
+      success: function(r) {
+        if (r.statusCode === 200) resolve(r.data)
+        else reject(r)
+      },
+      fail: reject,
     })
   })
 }
@@ -22,31 +26,39 @@ Page({
     loading: true,
   },
 
-  onLoad: function() { this.switchTab({currentTarget:{dataset:{index:0}}}) },
+  onLoad: function() {
+    this.switchTab({ currentTarget: { dataset: { index: 0 } } })
+  },
 
   switchTab: function(e) {
     var i = e.currentTarget.dataset.index
     this.setData({ tabIdx: i, loading: true })
     var self = this
     if (i === 0) {
-      req('/api/data-factory/cleaning-full').then(function(d) { self.setData({cleaning: d, loading: false}) }).catch(function(){ self.setData({loading:false}) })
+      request('/api/data-factory/cleaning-full').then(function(d) {
+        self.setData({ cleaning: d, loading: false })
+      }).catch(function() { self.setData({ loading: false }) })
     } else if (i === 1) {
-      req('/api/data-factory/attribution').then(function(d) { self.setData({attribution: d, loading: false}) }).catch(function(){ self.setData({loading:false}) })
+      request('/api/data-factory/attribution').then(function(d) {
+        self.setData({ attribution: d, loading: false })
+      }).catch(function() { self.setData({ loading: false }) })
     } else {
-      req('/api/data-factory/lineage-samples').then(function(d) { self.setData({lineage: d.samples || [], loading: false}) }).catch(function(){ self.setData({loading:false}) })
+      request('/api/data-factory/lineage-samples').then(function(d) {
+        self.setData({ lineage: d.samples || [], loading: false })
+      }).catch(function() { self.setData({ loading: false }) })
     }
   },
 
   onPullDownRefresh: function() {
     var self = this
-    this.switchTab({currentTarget:{dataset:{index: this.data.tabIdx}}})
-    setTimeout(function(){ wx.stopPullDownRefresh() }, 500)
+    this.switchTab({ currentTarget: { dataset: { index: this.data.tabIdx } } })
+    setTimeout(function() { wx.stopPullDownRefresh() }, 500)
   },
 
   loadAllLineage: function() {
     var self = this
     wx.showLoading({ title: '加载中...' })
-    req('/api/data-factory/lineage-samples?limit=100').then(function(d) {
+    request('/api/data-factory/lineage-samples?limit=100').then(function(d) {
       self.setData({ lineage: d.samples || [], showAll: true })
       wx.hideLoading()
     }).catch(function() {

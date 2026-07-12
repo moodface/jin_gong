@@ -1,166 +1,96 @@
 <view class="page">
-  <!-- Tab 切换 -->
   <view class="tabs">
-    <view
-      wx:for="{{tabs}}"
-      wx:key="*this"
-      class="tab-item {{tabIndex === index ? 'active' : ''}}"
-      data-index="{{index}}"
-      bindtap="switchTab"
-    >
-      {{item}}
-    </view>
+    <view wx:for="{{tabs}}" wx:key="*this" class="tab {{tabIndex===index?'on':''}}" data-index="{{index}}" bindtap="switchTab">{{item}}</view>
   </view>
-
-  <!-- 数据来源总览 -->
   <view class="source-bar">
     <text class="source-tag real">真实API</text>
     <text class="source-tag market">市场参考价</text>
     <text class="source-tag ai">AI模拟</text>
-    <text class="source-label">= 数据来源标识</text>
   </view>
 
-  <!-- 竞品监控 -->
-  <view wx:if="{{tabIndex === 0}}">
+  <view wx:if="{{tabIndex===0}}">
     <view class="card" wx:for="{{competitors}}" wx:key="id" data-id="{{item.id}}" bindtap="viewProduct">
       <view style="display:flex;justify-content:space-between;align-items:center;">
         <view style="display:flex;align-items:center;gap:12rpx;">
           <text style="font-size:28rpx;font-weight:600;">{{item.brand}}</text>
-          <text wx:if="{{item._clickable}}" class="source-tag {{item._sourceTag}}" catchtap="openSourceUrl" data-url="{{item._sourceUrl}}">{{item.data_source}} 🔗</text>
-          <text wx:else class="source-tag {{item._sourceTag}}">{{item.data_source}}</text>
+          <text class="source-tag {{item._sourceTag}}">{{item.data_source}}</text>
         </view>
         <text style="font-size:32rpx;color:#C8102E;font-weight:600;">¥{{item._priceDisplay}}</text>
       </view>
       <view style="margin-top:8rpx;display:flex;justify-content:space-between;">
-        <view>
-          <text style="font-size:26rpx;">{{item.product_name}}</text>
-          <text style="font-size:22rpx;color:#999;margin-left:12rpx;">{{item.platform}}</text>
-        </view>
+        <text style="font-size:26rpx;">{{item.product_name}}</text>
         <text style="font-size:24rpx;color:#FAAD14;">⭐ {{item.rating}}</text>
       </view>
+      <view style="font-size:22rpx;color:#999;margin-top:4rpx;">{{item.platform}}</view>
       <view style="margin-top:8rpx;display:flex;justify-content:space-between;font-size:22rpx;color:#999;">
         <text wx:if="{{item.promo_info}}" style="color:#C8102E;">🎫 {{item.promo_info}}</text>
         <text wx:else style="color:#ccc;">无促销</text>
         <text>{{item.review_count}}+条评价</text>
       </view>
-      <view style="margin-top:4rpx;font-size:20rpx;color:#ccc;text-align:right;display:flex;justify-content:space-between;">
-        <text style="color:#C8102E;">查看详情 ></text>
+      <view style="margin-top:4rpx;font-size:20rpx;color:#ccc;display:flex;justify-content:space-between;">
+        <text style="color:#C8102E;">查看详情</text>
         <text>{{item._updateShort}}</text>
       </view>
     </view>
-    <view class="card" style="background:#FFFBE6;">
-      <view style="font-size:22rpx;color:#D48806;line-height:1.6;">
-        💡 价格来源说明：<br/>
-        · <text class="source-tag-small market">市场参考价</text> = 基于京东/天猫公开售价的参考价格<br/>
-        · 促销信息来源于平台公开活动页<br/>
-        · 生产环境可接入京东/天猫开放平台API获取实时价格
-      </view>
-    </view>
   </view>
 
-  <!-- 舆情分析 -->
-  <view wx:if="{{tabIndex === 1}}">
+  <view wx:if="{{tabIndex===1}}">
     <view class="card" wx:for="{{sentiments}}" wx:key="id">
       <view style="display:flex;align-items:center;gap:12rpx;margin-bottom:8rpx;">
         <text style="font-size:28rpx;font-weight:600;">#{{item.keyword}}</text>
-        <text class="source-tag {{item._sourceTag}}">{{item.data_source}}</text>
+        <text class="source-tag {{item._sourceTag}}">AI模拟</text>
       </view>
-      <view style="font-size:22rpx;color:#999;margin-bottom:12rpx;">
-        平台: {{item.platform}} | 提及: {{item.mention_count}}次
-      </view>
+      <view style="font-size:22rpx;color:#999;margin-bottom:12rpx;">平台: {{item.platform}} | 提及: {{item.mention_count}}次</view>
       <view style="display:flex;align-items:center;gap:16rpx;">
         <view style="flex:1;height:20rpx;background:#eee;border-radius:10rpx;overflow:hidden;display:flex;">
           <view style="background:#52C41A;height:100%;width:{{item._posW}}%"></view>
-          <view style="background:#FAAD14;height:100%;width:{{item._neuW}}%"></view>
-          <view style="background:#FF4D4F;height:100%;width:{{item._negW}}%"></view>
+          <view style="background:#FAAD14;height:100%;width:{{item._negW}}%"></view>
         </view>
-        <text style="font-size:22rpx;color:#999;white-space:nowrap;">
-          👍{{item._posPct}}% 👎{{item._negPct}}%
-        </text>
-      </view>
-    </view>
-    <view class="card" style="background:#F0F5FF;">
-      <view style="font-size:22rpx;color:#2F54EB;line-height:1.6;">
-        💡 情感分析来源说明：<br/>
-        · <text class="source-tag-small ai">AI模拟</text> = 基于DeepSeek AI对社交媒体内容的情感分析<br/>
-        · 生产环境可对真实爬取内容进行NLP情感分析打标
+        <text style="font-size:22rpx;color:#999;">👍{{item._posPct}}% 👎{{item._negPct}}%</text>
       </view>
     </view>
   </view>
 
-  <!-- 预警 -->
-  <view wx:if="{{tabIndex === 2}}">
+  <view wx:if="{{tabIndex===2}}">
     <block wx:for="{{alerts}}" wx:key="time">
-      <view wx:if="{{item.severity === 'danger'}}" class="alert-danger">
+      <view wx:if="{{item.severity==='danger'}}" class="alert-danger">
         <text style="font-size:26rpx;font-weight:600;">🔴 {{item.type}}</text>
         <view style="font-size:24rpx;color:#999;margin-top:4rpx;">{{item.message}}</view>
       </view>
-      <view wx:if="{{item.severity === 'warning'}}" class="alert-warning">
+      <view wx:if="{{item.severity==='warning'}}" class="alert-warning">
         <text style="font-size:26rpx;font-weight:600;">📢 {{item.type}}</text>
         <view style="font-size:24rpx;color:#999;margin-top:4rpx;">{{item.message}}</view>
       </view>
     </block>
-    <view wx:if="{{alerts.length === 0}}" class="card" style="text-align:center;color:#999;">
-      <text>暂无预警信息</text>
-    </view>
+    <view wx:if="{{alerts.length===0}}" class="card" style="text-align:center;color:#999;"><text>暂无预警信息</text></view>
   </view>
 
-  <!-- 爬取任务 -->
-  <view wx:if="{{tabIndex === 3}}">
+  <view wx:if="{{tabIndex===3}}">
     <view class="card">
       <view class="card-title">手动触发爬取</view>
       <view class="scrape-methods">
         <view class="method-group">
-          <view class="method-label">基础 HTTP 请求</view>
-          <button class="scrape-btn" data-platform="微博+百度" bindtap="triggerScrape">
-            httpx 微博+百度
-          </button>
+          <text class="method-label">基础 HTTP 请求</text>
+          <button class="scrape-btn" data-platform="all" bindtap="triggerScrape">微博+百度</button>
         </view>
         <view class="method-group">
-          <view class="method-label">无头浏览器 (Playwright)</view>
-          <button class="scrape-btn" data-platform="playwright" bindtap="triggerScrape">
-            Playwright 抖音
-          </button>
+          <text class="method-label">Playwright 无头浏览器</text>
+          <button class="scrape-btn" data-platform="playwright" bindtap="triggerScrape">抖音</button>
         </view>
         <view class="method-group">
-          <view class="method-label">Scrapy 风格 Pipeline</view>
-          <button class="scrape-btn" data-platform="pipeline" bindtap="triggerScrape">
-            Pipeline 微博+百度
-          </button>
-        </view>
-      </view>
-      <view style="margin-top:16rpx;padding:12rpx;background:#F0F5FF;border-radius:8rpx;font-size:20rpx;color:#2F54EB;">
-        💡 三种爬虫技术路线：
-        1) httpx 基础请求 2) Playwright 无头浏览器 3) Scrapy Pipeline 架构
-      </view>
-    </view>
-
-    <view class="card" style="margin-top:20rpx;">
-      <view class="card-title">第三方数据 API</view>
-      <view class="scrape-methods">
-        <view class="method-group">
-          <view class="method-label">蝉妈妈 (抖音数据)</view>
-          <button class="scrape-btn third-party" data-platform="chanmama" bindtap="fetchThirdParty">
-            获取数据
-          </button>
-        </view>
-        <view class="method-group">
-          <view class="method-label">灰豚数据 (电商竞品)</view>
-          <button class="scrape-btn third-party" data-platform="huitun" bindtap="fetchThirdParty">
-            获取数据
-          </button>
+          <text class="method-label">Scrapy Pipeline</text>
+          <button class="scrape-btn" data-platform="pipeline" bindtap="triggerScrape">Pipeline</button>
         </view>
       </view>
     </view>
-
     <view class="card" wx:for="{{tasks}}" wx:key="id">
       <view style="display:flex;justify-content:space-between;">
         <text style="font-weight:600;">{{item.platform}}</text>
         <text class="task-status {{item.status}}">{{item._statusText}}</text>
       </view>
       <view style="font-size:24rpx;color:#999;margin-top:8rpx;">
-        <text wx:if="{{item.records_fetched > 0}}">抓取: {{item.records_fetched}}条 | </text>
-        <text>{{item.start_time || '未开始'}}</text>
+        <text wx:if="{{item.records_fetched>0}}">抓取: {{item.records_fetched}}条 | </text>
+        <text>{{item.start_time||'未开始'}}</text>
       </view>
     </view>
   </view>

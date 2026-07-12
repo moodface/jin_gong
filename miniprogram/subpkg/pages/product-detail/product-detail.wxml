@@ -1,22 +1,12 @@
 <view class="page">
-
-  <!-- 加载 -->
-  <view wx:if="{{loading}}" style="text-align:center;padding-top:200rpx;color:#999;">
-    <text>加载中...</text>
-  </view>
-
-  <!-- 内容 -->
+  <view wx:if="{{loading}}" style="text-align:center;padding-top:200rpx;color:#999;"><text>加载中...</text></view>
   <block wx:if="{{!loading && item}}">
-
-    <!-- 头部商品信息 -->
     <view class="hero-card">
       <view class="hero-brand">{{item.brand}}</view>
       <view class="hero-name">{{item.product_name}}</view>
       <view class="hero-price-row">
         <view class="hero-price-current">¥{{item.price}}</view>
-        <view class="hero-price-change {{item.price_change >= 0 ? 'up' : 'down'}}">
-          {{item.price_change >= 0 ? '▲' : '▼'}} {{item.price_change}}% (近30天)
-        </view>
+        <view class="hero-price-change {{item.price_change >= 0 ? 'up' : 'down'}}">{{item.price_change >= 0 ? '▲' : '▼'}} {{item.price_change}}% (近30天)</view>
       </view>
       <view class="hero-meta">
         <text>平台: {{item.platform}}</text>
@@ -25,39 +15,25 @@
         <text>{{item.review_count}}+条评价</text>
       </view>
       <view class="source-badge">
-        <text wx:if="{{item.source_clickable}}" style="text-decoration:underline;" bindtap="openSourceUrl" data-url="{{item.source_url}}">
-          {{item.data_source || '未知'}} 🔗
-        </text>
-        <text wx:else>{{item.data_source || '模拟数据'}}</text>
+        <text wx:if="{{item.source_clickable}}" style="text-decoration:underline;" bindtap="openSourceUrl" data-url="{{item.source_url}}">{{item.data_source||'未知'}} 🔗</text>
+        <text wx:else>{{item.data_source||'模拟数据'}}</text>
       </view>
       <text class="update-time">更新于 {{item.update_time}}</text>
     </view>
 
-    <!-- 价格历史趋势 -->
     <view class="section">
       <view class="section-title">📈 近30天价格走势</view>
-      <view class="section-subtitle">
-        最低 ¥{{item.price_lowest}} | 最高 ¥{{item.price_highest}} | 均价 ¥{{item.price_avg}}
-      </view>
+      <view class="section-subtitle">最低 ¥{{item.price_lowest}} | 最高 ¥{{item.price_highest}} | 均价 ¥{{item.price_avg}}</view>
       <view wx:if="{{item.price_history && item.price_history.length > 0}}" class="bar-chart">
         <view class="bar-row" wx:for="{{item.price_history}}" wx:key="day">
           <text class="bar-label">{{item.day}}d</text>
-          <view class="bar-track">
-            <view
-              class="bar-fill"
-              style="width: {{(item.price / maxPrice * 100)}}%; background: {{item.flag === 'promo' ? '#52C41A' : '#C8102E'}}"
-            ></view>
-          </view>
-          <text class="bar-value" style="color: {{item.flag === 'promo' ? '#52C41A' : '#333'}}">¥{{item.price}}</text>
+          <view class="bar-track"><view class="bar-fill" style="width:{{(item.price / maxPrice * 100)}}%; background:{{item.flag==='promo'?'#52C41A':'#C8102E'}}"></view></view>
+          <text class="bar-value" style="color:{{item.flag==='promo'?'#52C41A':'#333'}}">¥{{item.price}}</text>
         </view>
       </view>
-      <view class="legend-row">
-        <view class="legend-dot" style="background:#C8102E;"></view><text>正常价</text>
-        <view class="legend-dot" style="background:#52C41A;"></view><text>促销价</text>
-      </view>
+      <view class="legend-row"><view class="legend-dot" style="background:#C8102E;"></view><text>正常价</text><view class="legend-dot" style="background:#52C41A;"></view><text>促销价</text></view>
     </view>
 
-    <!-- 同品牌跨平台价格 -->
     <view class="section" wx:if="{{item.cross_platform && item.cross_platform.length > 0}}">
       <view class="section-title">🔄 {{item.brand}} 其他平台价格</view>
       <view class="platform-cards">
@@ -67,56 +43,37 @@
           <view class="platform-sub">{{item.product_name}}</view>
           <view wx:if="{{item.promo_info}}" class="platform-promo">🎫 {{item.promo_info}}</view>
           <view wx:if="{{item.source_clickable}}" class="platform-source-link" bindtap="openSourceUrl" data-url="{{item.source_url}}">{{item.data_source}} 🔗</view>
-          <view wx:else class="platform-source-sim">{{item.data_source || '模拟数据'}}</view>
+          <view wx:else class="platform-source-sim">{{item.data_source||'模拟数据'}}</view>
           <view class="platform-arrow">查看 ></view>
         </view>
       </view>
     </view>
 
-    <!-- 同类竞品对比 -->
     <view class="section" wx:if="{{item.same_category && item.same_category.length > 0}}">
       <view class="section-title">🏪 同类竞品价格对比</view>
       <view class="competitor-list">
         <view class="competitor-row" wx:for="{{item.same_category}}" wx:key="id" wx:for-item="c" data-id="{{c.id}}" bindtap="viewCompetitor">
-          <view class="comp-left">
-            <text class="comp-brand">{{c.brand}}</text>
-            <text class="comp-name">{{c.product_name}}</text>
-          </view>
+          <view class="comp-left"><text class="comp-brand">{{c.brand}}</text><text class="comp-name">{{c.product_name}}</text></view>
           <view class="comp-right">
             <text class="comp-price">¥{{c.price}}</text>
             <text class="comp-platform">{{c.platform}}</text>
             <text wx:if="{{c.source_clickable}}" class="comp-source" data-url="{{c.source_url}}" bindtap="openSourceUrl">🔗 {{c.data_source}}</text>
-            <text wx:else class="comp-source-sim">{{c.data_source || '模拟'}}</text>
+            <text wx:else class="comp-source-sim">{{c.data_source||'模拟'}}</text>
           </view>
         </view>
       </view>
     </view>
 
-    <!-- 评价摘要 -->
     <view class="section">
       <view class="section-title">💬 用户评价摘要</view>
       <view class="review-card">
-        <view class="review-tags">
-          <text class="review-tag" wx:for="{{item.review_summary.tags}}" wx:key="*this">{{item}}</text>
-        </view>
-        <view class="review-row good">
-          <text class="review-icon">👍</text>
-          <text>{{item.review_summary.good}}</text>
-        </view>
-        <view class="review-row bad">
-          <text class="review-icon">👎</text>
-          <text>{{item.review_summary.bad}}</text>
-        </view>
+        <view class="review-tags"><text class="review-tag" wx:for="{{item.review_summary.tags}}" wx:key="*this">{{item}}</text></view>
+        <view class="review-row good"><text class="review-icon">👍</text><text>{{item.review_summary.good}}</text></view>
+        <view class="review-row bad"><text class="review-icon">👎</text><text>{{item.review_summary.bad}}</text></view>
       </view>
     </view>
 
-    <view class="footer-hint" wx:if="{{item.source_clickable}}" bindtap="openSourceUrl" data-url="{{item.source_url}}">
-      <text>🔗 数据来源: {{item.data_source}} — 点击复制平台链接</text>
-    </view>
-    <view class="footer-hint" wx:else>
-      <text>数据来源: {{item.data_source || '模拟数据'}}</text>
-    </view>
-
+    <view class="footer-hint" wx:if="{{item.source_clickable}}" bindtap="openSourceUrl" data-url="{{item.source_url}}"><text>🔗 数据来源: {{item.data_source}} - 点击复制平台链接</text></view>
+    <view class="footer-hint" wx:else><text>数据来源: {{item.data_source||'模拟数据'}}</text></view>
   </block>
-
 </view>
