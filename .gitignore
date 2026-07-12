@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+*.db
+
+# Node
+node_modules/
+miniprogram_npm/
+package-lock.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Screenshots
+screenshots/
+
+# Env
+.env
+
+# Temp
+test_*.txt
+test_*.py
+debug_*.py

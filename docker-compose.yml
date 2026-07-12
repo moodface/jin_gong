@@ -1,0 +1,120 @@
+# ================================================================
+# 金宫味业 - Docker Compose 生产环境配置
+# 部署到: 腾讯云轻量应用服务器 / 云服务器 CVM
+# Docker Compose v3.8+
+# AI生成: 服务编排基础模板
+# 人工修改: 腾讯云镜像加速、数据卷配置、网络隔离
+# ================================================================
+
+version: '3.8'
+
+services:
+  # ========== FastAPI 后端 ==========
+  backend:
+    build: .
+    container_name: jingong-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER:-jingong}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-Jingong2026!}
+      - MYSQL_DATABASE=jingong_marketing
+      - TZ=Asia/Shanghai
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/screenshots:/app/screenshots
+      - ./backend/data:/app/data
+    networks:
+      - jingong-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ========== MySQL 8.0 ==========
+  mysql:
+    image: ccr.ccs.tencentyun.com/library/mysql:8.0  # 腾讯云镜像加速
+    container_name: jingong-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-JingongRoot2026!}
+      MYSQL_DATABASE: jingong_marketing
+      MYSQL_USER: ${MYSQL_USER:-jingong}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-Jingong2026!}
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docs/mysql_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jingong-net
+
+  # ========== Redis 7 ==========
+  redis:
+    image: ccr.ccs.tencentyun.com/library/redis:7-alpine  # 腾讯云镜像加速
+    container_name: jingong-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-JingongRedis2026!}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jingong-net
+
+  # ========== Nginx 反向代理 ==========
+  nginx:
+    image: ccr.ccs.tencentyun.com/library/nginx:1.25-alpine
+    container_name: jingong-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro  # SSL证书目录
+    depends_on:
+      - backend
+    networks:
+      - jingong-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  jingong-net:
+    driver: bridge
