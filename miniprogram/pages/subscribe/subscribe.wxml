@@ -1,0 +1,73 @@
+<view class="page">
+
+  <!-- 通知计数横幅 -->
+  <view class="banner" wx:if="{{alertCount > 0}}">
+    <text class="banner-icon">🔔</text>
+    <text class="banner-text">检测到 {{alertCount}} 条新预警</text>
+    <text class="banner-action" bindtap="checkAlerts">刷新</text>
+  </view>
+
+  <!-- 通知列表 -->
+  <view class="card" wx:if="{{alerts.length > 0}}">
+    <view class="card-head">
+      <text class="card-title">最新预警</text>
+      <text class="card-badge">{{alerts.length}}条</text>
+    </view>
+    <view class="alert {{item.severity}}" wx:for="{{alerts}}" wx:key="time" wx:for-item="a"
+      wx:if="{{a.type === 'price_drop'}}" data-id="{{a.product_id}}" bindtap="navToProduct">
+      <text class="a-type price">💰 竞品降价</text>
+      <text class="a-msg">{{a.message}}</text>
+      <text class="a-time">{{a.time}}</text>
+    </view>
+    <view class="alert {{item.severity}}" wx:for="{{alerts}}" wx:key="time" wx:for-item="a"
+      wx:if="{{a.type === 'sentiment_surge'}}">
+      <text class="a-type sentiment">💬 负面舆情</text>
+      <text class="a-msg">{{a.message}}</text>
+      <text class="a-time">{{a.time}}</text>
+    </view>
+  </view>
+
+  <!-- 订阅管理 -->
+  <view class="card">
+    <view class="card-title">📋 订阅关键词</view>
+    <view class="tag-grid">
+      <view
+        wx:for="{{keywordList}}" wx:key="name"
+        class="sub-tag {{item.selected ? 'on' : ''}}"
+        data-value="{{item.name}}" bindtap="toggleKeyword"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">🏪 订阅品牌</view>
+    <view class="tag-grid">
+      <view
+        wx:for="{{brandList}}" wx:key="name"
+        class="sub-tag {{item.selected ? 'on' : ''}}"
+        data-value="{{item.name}}" bindtap="toggleBrand"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">⚙️ 通知设置</view>
+    <view class="toggle-row" bindtap="toggleNotify">
+      <text>微信通知推送</text>
+      <view class="toggle {{notifyEnabled ? 'on' : ''}}">
+        <view class="toggle-knob"></view>
+      </view>
+    </view>
+    <view style="font-size:22rpx;color:#999;margin-top:8rpx;">
+      {{notifyEnabled ? '已开启检测到异常时自动提醒' : '已关闭通知推送'}}
+    </view>
+  </view>
+
+  <view class="card">
+    <button class="check-btn" bindtap="manualCheck">🔍 手动执行异常检测</button>
+    <view style="text-align:center;font-size:20rpx;color:#ccc;margin-top:12rpx;">
+      定时检测间隔: 5分钟 ｜ 微信模板消息需配置AppID
+    </view>
+  </view>
+
+</view>

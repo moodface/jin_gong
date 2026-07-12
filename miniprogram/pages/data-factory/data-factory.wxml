@@ -1,0 +1,115 @@
+<view class="page">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="*this" class="tab {{tabIdx===index?'on':''}}" data-index="{{index}}" bindtap="switchTab">{{item}}</view>
+  </view>
+
+  <!-- === 清洗看板 === -->
+  <block wx:if="{{tabIdx===0 && cleaning}}">
+    <view class="hero">数据清洗看板</view>
+    <view class="stat-grid">
+      <view class="stat s1">
+        <view class="stat-v">{{cleaning.overview.total_records}}</view>
+        <view class="stat-l">采集总数</view>
+      </view>
+      <view class="stat s2">
+        <view class="stat-v">{{cleaning.overview.dup_rate}}%</view>
+        <view class="stat-l">去重率</view>
+      </view>
+      <view class="stat s3">
+        <view class="stat-v">{{cleaning.overview.abnormal_rate}}%</view>
+        <view class="stat-l">异常值占比</view>
+      </view>
+      <view class="stat s4">
+        <view class="stat-v">{{cleaning.overview.fill_rate_sentiment}}%</view>
+        <view class="stat-l">字段填充率</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-t">📊 各平台清洗详情</view>
+      <view class="bar-row" wx:for="{{cleaning.platform_cleaning}}" wx:key="name">
+        <text class="bar-l">{{item.name}}</text>
+        <view class="bar-bg">
+          <view class="bar-fill" style="width:{{100 - item.dup_rate}}%;background:{{item.dup_rate>30?'#FF4D4F':'#52C41A'}}"></view>
+        </view>
+        <text class="bar-r">{{item.distinct}}/{{item.total}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-t">⚠️ 异常检测</view>
+      <view class="anomaly">
+        <text>· 点赞过高 (&gt;10万): <text class="red">{{cleaning.anomalies.high_likes_count}}条</text></text>
+        <text>· 评论大于点赞: <text class="red">{{cleaning.anomalies.comment_gt_likes_count}}条</text></text>
+        <text>· 空内容记录: <text class="red">{{cleaning.anomalies.empty_content_count}}条</text></text>
+      </view>
+    </view>
+  </block>
+
+  <!-- === 归因分析 === -->
+  <block wx:if="{{tabIdx===1 && attribution}}">
+    <view class="hero">各平台转化贡献权重</view>
+    <view class="card" style="background:#FFFBE6;">
+      <view style="font-size:20rpx;color:#D48806;">算法：0.4×内容量 + 0.25×互动率 + 0.2×舆情正面率 + 0.15×竞品活跃度</view>
+    </view>
+
+    <view class="card" wx:for="{{attribution.platforms}}" wx:key="platform">
+      <view style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14rpx;">
+        <text style="font-size:28rpx;font-weight:600;">{{item.platform}}</text>
+        <text style="font-size:36rpx;font-weight:700;color:#C8102E;">{{item.weight}}<text style="font-size:22rpx;color:#999;">分</text></text>
+      </view>
+      <view class="factor-row">
+        <text class="f-name">内容量</text>
+        <view class="f-bg"><view class="f-fill f-c" style="width:{{item.factors.content_score}}%"></view></view>
+        <text class="f-val">{{item.factors.content_score}}</text>
+      </view>
+      <view class="factor-row">
+        <text class="f-name">互动率</text>
+        <view class="f-bg"><view class="f-fill f-e" style="width:{{item.factors.engagement_score}}%"></view></view>
+        <text class="f-val">{{item.factors.engagement_score}}</text>
+      </view>
+      <view class="factor-row">
+        <text class="f-name">舆情正面</text>
+        <view class="f-bg"><view class="f-fill f-s" style="width:{{item.factors.sentiment_score}}%"></view></view>
+        <text class="f-val">{{item.factors.sentiment_score}}</text>
+      </view>
+      <view class="factor-row">
+        <text class="f-name">竞品活跃</text>
+        <view class="f-bg"><view class="f-fill f-p" style="width:{{item.factors.competition_penalty}}%"></view></view>
+        <text class="f-val">{{item.factors.competition_penalty}}</text>
+      </view>
+      <view style="margin-top:10rpx;display:flex;gap:16rpx;font-size:20rpx;color:#aaa;">
+        <text>内容{{item.raw_data.content_count}}条</text>
+        <text>👍{{item.raw_data.total_likes}}</text>
+        <text>促销{{item.raw_data.competitor_promos}}次</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- === 数据血缘 === -->
+  <block wx:if="{{tabIdx===2 && lineage.length}}">
+    <view class="hero">数据血缘追溯（最近4条）</view>
+    <view class="lineage-card" wx:for="{{lineage}}" wx:key="id">
+      <view style="display:flex;justify-content:space-between;margin-bottom:12rpx;">
+        <text style="font-size:24rpx;color:#999;">#{{item.id}} · {{item.platform}}</text>
+        <text class="source-tag {{item.data_source==='真实API'?'real':'ai'}}">{{item.data_source}}</text>
+      </view>
+      <view style="font-size:26rpx;font-weight:500;margin-bottom:16rpx;color:#333;">{{item.content}}</view>
+      <view class="chain">
+        <view class="chain-node" wx:for="{{item.chain}}" wx:key="stage">
+          <view class="chain-dot"></view>
+          <view class="chain-content">
+            <text class="chain-icon">{{item.icon}}</text>
+            <text class="chain-stage">{{item.stage}}</text>
+            <text class="chain-detail">{{item.detail}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view style="text-align:center;padding:20rpx 0;" wx:if="{{!showAll}}">
+      <button style="background:#fff;border:1rpx solid #C8102E;color:#C8102E;font-size:24rpx;" size="mini" bindtap="loadAllLineage">查看全部数据血缘</button>
+    </view>
+  </block>
+
+  <view wx:if="{{loading}}" style="text-align:center;padding:100rpx 0;color:#999;">加载中...</view>
+</view>

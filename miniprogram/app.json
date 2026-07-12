@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/dashboard/dashboard",
+    "pages/report/report",
+    "pages/monitor/monitor",
+    "pages/data-factory/data-factory",
+    "pages/subscribe/subscribe",
+    "pages/product-detail/product-detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#C8102E",
+    "navigationBarTitleText": "金宫味业数据中台",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#C8102E",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "📊 战情室"
+      },
+      {
+        "pagePath": "pages/report/report",
+        "text": "📋 智能报告"
+      },
+      {
+        "pagePath": "pages/monitor/monitor",
+        "text": "🔍 监控中心"
+      },
+      {
+        "pagePath": "pages/data-factory/data-factory",
+        "text": "⚙️ 数据工厂"
+      },
+      {
+        "pagePath": "pages/subscribe/subscribe",
+        "text": "🔔 消息订阅"
+      }
+    ]
+  },
+  "usingComponents": {
+    "van-cell": "@vant/weapp/cell/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-tag": "@vant/weapp/tag/index",
+    "van-tabs": "@vant/weapp/tabs/index",
+    "van-tab": "@vant/weapp/tab/index",
+    "van-search": "@vant/weapp/search/index",
+    "van-button": "@vant/weapp/button/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-notice-bar": "@vant/weapp/notice-bar/index",
+    "van-progress": "@vant/weapp/progress/index",
+    "van-divider": "@vant/weapp/divider/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "ec-canvas": "./components/ec-canvas/ec-canvas"
+  },
+  "sitemapLocation": "sitemap.json"
+}
