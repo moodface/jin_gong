@@ -27,7 +27,7 @@ Page({
     var data
     try { data = await api.getDashboard() }
     catch (e) {
-      this.setData({ loading: false, error: '数据加载失败，请确认后端已启动 (http://192.168.1.7:8000)' })
+      this.setData({ loading: false, error: '数据加载失败，请确认后端已启动 (http://139.155.99.106:8000)' })
       return
     }
     var alerts = []

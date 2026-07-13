@@ -1,7 +1,7 @@
 const app = getApp()
 
 // 后端 API 地址 - 根据实际环境修改
-const API_BASE = 'http://192.168.1.7:8000'
+const API_BASE = 'http://139.155.99.106:8000'
 
 function request(path, options = {}) {
   return new Promise((resolve, reject) => {

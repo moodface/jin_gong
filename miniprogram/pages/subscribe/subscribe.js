@@ -1,4 +1,4 @@
-var API = 'http://192.168.1.7:8000'
+var API = 'http://139.155.99.106:8000'
 
 function request(method, path, data) {
   return new Promise(function(resolve, reject) {
