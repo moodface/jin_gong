@@ -21,6 +21,9 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 WORKDIR /app
 
+# Debian 国内源加速
+RUN sed -i 's|http://deb.debian.org|https://mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources
+
 # 系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
