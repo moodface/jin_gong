@@ -44,7 +44,7 @@ services:
 
   # ========== MySQL 8.0 ==========
   mysql:
-    image: ccr.ccs.tencentyun.com/library/mysql:8.0  # 腾讯云镜像加速
+    image: mysql:8.0  # 腾讯云部署, 拉取走阿里云镜像加速
     container_name: jingong-mysql
     restart: always
     environment:
@@ -72,7 +72,7 @@ services:
 
   # ========== Redis 7 ==========
   redis:
-    image: ccr.ccs.tencentyun.com/library/redis:7-alpine  # 腾讯云镜像加速
+    image: redis:7-alpine  # 腾讯云部署, 拉取走阿里云镜像加速
     container_name: jingong-redis
     restart: always
     ports:
@@ -90,7 +90,7 @@ services:
 
   # ========== Nginx 反向代理 ==========
   nginx:
-    image: ccr.ccs.tencentyun.com/library/nginx:1.25-alpine
+    image: nginx:1.25-alpine
     container_name: jingong-nginx
     restart: always
     ports:
