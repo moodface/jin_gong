@@ -10,9 +10,9 @@
 
 | 层级 | 技术 | 选型理由 |
 |------|------|----------|
+| 图表 | CSS 柱状图 + 堆叠条 | 移动端零依赖 100% 兼容，含 4 种图表类型（GMV 趋势/平台流量/竞品价格/舆情情感），ECharts 代码已集成可切换 |
 | 前端 | 原生微信小程序 | 面试要求，原生方案稳定性最佳、审核通过率最高 |
-| UI组件 | Vant Weapp 1.11.7 | 微信生态使用最广泛的UI库，8个组件覆盖Tag/Progress/Tabs/Empty等场景 |
-| 图表 | CSS柱状图 + ECharts预留 | 移动端CSS图表零依赖100%兼容，ECharts-for-weixin代码已集成 |
+| UI组件 | Vant Weapp 1.11.7 | 微信生态使用最广泛的UI库，5个组件覆盖 Tag/Loading/Empty/Button/Progress |
 | 状态管理 | MobX miniprogram | 轻量级（~4KB），计算属性天然支持响应式 |
 | 后端 | Python FastAPI | 快速原型开发（7天交付验证），异步高性能，AI生态良好 |
 | 数据库 | SQLite（开发）/ MySQL 8.0（生产） | 开发免安装，生产docker-compose一行切换 |
@@ -229,13 +229,22 @@ API 地址: `http://localhost:8000`
 set DEEPSEEK_API_KEY=sk-your-key
 ```
 
-### 4. 生产部署
+### 4. 部署到腾讯云
 
 ```bash
-cp .env.example .env
-# 编辑 .env 填写真实密钥
+# 服务器端（网页终端或SSH）
+cd /opt
+git clone https://github.com/moodface/jin_gong.git
+cd jin_gong
+# 配置 Docker 镜像源（腾讯云必做）
+mkdir -p /etc/docker
+echo '{"registry-mirrors":["https://mirror.ccs.tencentyun.com"]}' > /etc/docker/daemon.json
+systemctl restart docker
+# 一键部署
 chmod +x deploy.sh && ./deploy.sh
 ```
+
+部署后访问 `http://你的IP:8000` 验证。详细步骤见「腾讯云部署注意事项」章节。
 
 ---
 
@@ -272,6 +281,27 @@ chmod +x deploy.sh && ./deploy.sh
 | AI协作 (25%) | ✅ | DeepSeek集成、Prompt工程、AI协作日志、代码标注 |
 | 产品体验 (15%) | ✅ | CSS可视化图表、5Tab页面、点击跳转详情、推送订阅 |
 | 工程规范 (10%) | ✅ | 模块化代码、完整README、Docker部署、Git规范提交 |
+
+---
+
+## 已知限制
+
+| 限制 | 说明 | 解决方案 |
+|------|------|----------|
+| 竞品价格为市场参考价 | 非实时 API 爬取，基于京东/天猫公开售价 | 接入第三方数据 API (蝉妈妈/灰豚) 获取实时价格 |
+| 手机端需调试模式 | 无 HTTPS 域名时，手机扫码需开启微信调试模式 | 购买域名 + 申请免费 SSL 证书 |
+| 微博 API 偶尔 403 | 反爬策略间歇性拦截 | 已含 12 个请求头伪装、优雅降级、Mock 回退 |
+| AI 报告无 Key 时用本地模板 | DeepSeek API Key 可选配置 | 无 Key 自动回退到 4 章节模板报告，不走网络请求 |
+
+---
+
+## 腾讯云部署注意事项
+
+1. **镜像源**：Docker Hub 被墙，需在 `/etc/docker/daemon.json` 配置 `mirror.ccs.tencentyun.com`
+2. **apt 源**：Dockerfile 中 Debian 源已改为阿里云镜像 (`mirrors.aliyun.com`)
+3. **安全组**：腾讯云防火墙需开放 **8000** (API)、**80** (HTTP)、**443** (HTTPS) 端口
+4. **API Key**：修改 `.env` 文件中的 `DEEPSEEK_API_KEY`，然后 `docker compose restart backend`
+5. **防火墙**：轻量服务器用「防火墙」页面，CVM 用「安全组」页面
 
 ---
 
